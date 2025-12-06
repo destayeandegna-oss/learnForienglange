@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoLearn - Learn Languages</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="https://kit.fontawesome.com/a076d05399.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #58cc02;
+            --primary-dark: #46a302;
+            --primary-light: #89e034;
+            --secondary-color: #1cb0f6;
+            --error-color: #ff4b4b;
+            --success-color: #58cc02;
+            --warning-color: #ffc800;
+            --bg-light: #ffffff;
+            --bg-gray: #f7f7f7;
+            --text-dark: #3c3c3c;
+            --text-light: #777;
+            --border-color: #e5e5e5;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .dark {
+            --primary-color: #58cc02;
+            --primary-dark: #46a302;
+            --primary-light: #6dd404;
+            --secondary-color: #1cb0f6;
+            --error-color: #ff6b6b;
+            --success-color: #58cc02;
+            --warning-color: #ffd93d;
+            --bg-light: #1a1a1a;
+            --bg-gray: #2a2a2a;
+            --text-dark: #e8e8e8;
+            --text-light: #a0a0a0;
+            --border-color: #3a3a3a;
+            --shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-lg: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gray) 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            transition: background 0.3s ease;
+        }
+
+        .header {
+            background: var(--bg-light);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .flame { color: #ff9500; }
+        .star { color: #ffc800; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .language-card {
+            background: var(--bg-light);
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .language-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .language-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(88, 204, 2, 0.1), rgba(28, 176, 246, 0.1));
+        }
+
+        .language-flag {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .language-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 0 var(--primary-dark);
+            margin-top: 1rem;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--primary-dark);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lesson-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .lesson-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .lesson-xp {
+            background: var(--warning-color);
+            color: var(--text-dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .lesson-description {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            background: var(--border-color);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .exercise-screen {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .progress-header {
+            margin-bottom: 2rem;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+        }
+
+        .question-type {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+
+        .question-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .audio-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+        }
+
+        .audio-btn:hover {
+            background: #1a9cd8;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            background: var(--bg-light);
+            border: 3px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            color: var(--text-dark);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--text-light);
+            background: var(--bg-gray);
+        }
+
+        .option-btn.selected {
+            border-color: var(--secondary-color);
+            background: rgba(28, 176, 246, 0.1);
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background: rgba(88, 204, 2, 0.1);
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background: rgba(255, 75, 75, 0.1);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .input-answer {
+            width: 100%;
+            padding: 1.25rem;
+            font-size: 1.25rem;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-answer:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .feedback {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: rgba(88, 204, 2, 0.1);
+            border: 2px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 75, 75, 0.1);
+            border: 2px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .correct-answer {
+            margin-top: 0.5rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+            box-shadow: 0 4px 0 var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--border-color);
+        }
+
+        .complete-screen {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .complete-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .complete-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--success-color);
+            margin-bottom: 1rem;
+        }
+
+        .complete-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .stats {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                font-size: 0.875rem;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .language-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .question-text {
+                font-size: 1.25rem;
+            }
+
+            .exercise-screen {
+                padding: 1.5rem;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">LingoLearn</div>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-icon flame">🔥</span>
+                <span id="streak">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon star">⭐</span>
+                <span id="totalXP">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="welcome-screen">
+                <h1 class="welcome-title">Choose Your Language</h1>
+                <p class="welcome-subtitle">Start your learning journey today!</p>
+                <div class="language-grid">
+                    <div class="language-card" data-lang="spanish">
+                        <div class="language-flag">🇪🇸</div>
+                        <div class="language-name">Spanish</div>
+                    </div>
+                    <div class="language-card" data-lang="french">
+                        <div class="language-flag">🇫🇷</div>
+                        <div class="language-name">French</div>
+                    </div>
+                    <div class="language-card" data-lang="german">
+                        <div class="language-flag">🇩🇪</div>
+                        <div class="language-name">German</div>
+                    </div>
+                    <div class="language-card" data-lang="japanese">
+                        <div class="language-flag">🇯🇵</div>
+                        <div class="language-name">Japanese</div>
+                    </div>
+                </div>
+                <button class="btn" id="startBtn" disabled>Get Started</button>
+            </div>
+        </div>
+
+        <!-- Lessons Screen -->
+        <div id="lessonsScreen" class="screen">
+            <div class="lesson-grid" id="lessonGrid"></div>
+        </div>
+
+        <!-- Exercise Screen -->
+        <div id="exerciseScreen" class="screen">
+            <div class="exercise-screen">
+                <div class="progress-header">
+                    <div class="progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question-type" id="questionType">Translate</div>
+                    <h2 class="question-text" id="questionText">How do you say "Hello"?</h2>
+                    <button class="audio-btn" id="audioBtn" style="display: none;">
+                        <span id="audioIcon">🔊</span>
+                        <span id="audioText">Play Audio</span>
+                    </button>
+                </div>
+
+                <div id="optionsContainer"></div>
+
+                <div class="feedback" id="feedback">
+                    <div id="feedbackText">Correct! Well done!</div>
+                    <div class="correct-answer" id="correctAnswerText"></div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="skipBtn">Skip</button>
+                    <button class="btn" id="checkBtn" disabled>Check</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div id="completeScreen" class="screen">
+            <div class="complete-screen">
+                <div class="complete-icon">🎉</div>
+                <h1 class="complete-title">Lesson Complete!</h1>
+                <div class="complete-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="earnedXP">+20</div>
+                        <div class="stat-label">XP Earned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy">100%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="correctAnswers">10/10</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                </div>
+                <button class="btn" id="continueBtn">Continue Learning</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Language lessons database
+        const lessons = {
+            spanish: [
+                {
+                    id: 1,
+                    title: "Basics 1",
+                    description: "Learn basic greetings and introductions",
+                    xp: 20,
+                    progress: 0,
+                    exercises: [
+                        { type: "multiple", question: "How do you say 'Hello'?", options: ["Hola", "Adiós", "Gracias", "Por favor"], correct: 0 },
+                        { type: "multiple", question: "What does 'Buenos días' mean?", options: ["Good night", "Good morning", "Good afternoon", "Goodbye"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Thank you'", answer: "gracias" },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "hola", audio: "Hola" },
+                        { type: "multiple", question: "How do you say 'Goodbye'?", options: ["Hola", "Adiós", "Bien", "Mal"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Please'", answer: "por favor" },
+                        { type: "multiple", question: "What does 'Buenas noches' mean?", options: ["Good morning", "Good afternoon", "Good night", "Good day"], correct: 2 },
+                        { type: "translate", question: "Translate: 'How are you?'", answer: "cómo estás" },
+                        { type: "multiple", question: "How do you say 'Yes'?", options: ["No", "Sí", "Quizás", "Nunca"], correct: 1 },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "gracias", audio: "Gracias" }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Numbers",
+                    description: "Learn to count from 1 to 20",
+                    xp: 25,
+                    progress: 0,
+                    exercises: [
+                        { type: "multiple", question: "What is 'uno' in English?", options: ["One", "Two", "Three", "Four"], correct: 0 },
+                        { type: "multiple", question: "How do you say '5'?", options: ["Cuatro", "Cinco", "Seis", "Siete"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Ten'", answer: "diez" },
+                        { type: "multiple", question: "What is 'veinte'?", options: ["Ten", "Fifteen", "Twenty", "Twenty-five"], correct: 2 },
+                        { type: "translate", question: "Translate: 'Three'", answer: "tres" },
+                        { type: "listening", question: "Listen and type the number:", answer: "siete", audio: "Siete" },
+                        { type: "multiple", question: "How do you say '15'?", options: ["Catorce", "Quince", "Dieciséis", "Diecisiete"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Eight'", answer: "ocho" },
+                        { type: "multiple", question: "What is 'once'?", options: ["Ten", "Eleven", "Twelve", "Thirteen"], correct: 1 },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "dos", audio: "Dos" }
+                    ]
+                }
+            ],
+            french: [
+                {
+                    id: 1,
+                    title: "Basics 1",
+                    description: "Learn basic greetings and introductions",
+                    xp: 20,
+                    progress: 0,
+                    exercises: [
+                        { type: "multiple", question: "How do you say 'Hello'?", options: ["Bonjour", "Au revoir", "Merci", "S'il vous plaît"], correct: 0 },
+                        { type: "multiple", question: "What does 'Bonsoir' mean?", options: ["Good morning", "Good afternoon", "Good evening", "Goodbye"], correct: 2 },
+                        { type: "translate", question: "Translate: 'Thank you'", answer: "merci" },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "bonjour", audio: "Bonjour" },
+                        { type: "multiple", question: "How do you say 'Goodbye'?", options: ["Bonjour", "Au revoir", "Oui", "Non"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Please'", answer: "s'il vous plaît" },
+                        { type: "multiple", question: "What does 'Bonne nuit' mean?", options: ["Good day", "Good afternoon", "Good night", "Good morning"], correct: 2 },
+                        { type: "translate", question: "Translate: 'How are you?'", answer: "comment allez-vous" },
+                        { type: "multiple", question: "How do you say 'Yes'?", options: ["Non", "Oui", "Peut-être", "Jamais"], correct: 1 },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "merci", audio: "Merci" }
+                    ]
+                }
+            ],
+            german: [
+                {
+                    id: 1,
+                    title: "Basics 1",
+                    description: "Learn basic greetings and introductions",
+                    xp: 20,
+                    progress: 0,
+                    exercises: [
+                        { type: "multiple", question: "How do you say 'Hello'?", options: ["Hallo", "Auf Wiedersehen", "Danke", "Bitte"], correct: 0 },
+                        { type: "multiple", question: "What does 'Guten Morgen' mean?", options: ["Good night", "Good morning", "Good afternoon", "Goodbye"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Thank you'", answer: "danke" },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "hallo", audio: "Hallo" },
+                        { type: "multiple", question: "How do you say 'Goodbye'?", options: ["Hallo", "Auf Wiedersehen", "Gut", "Schlecht"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Please'", answer: "bitte" },
+                        { type: "multiple", question: "What does 'Gute Nacht' mean?", options: ["Good morning", "Good afternoon", "Good night", "Good day"], correct: 2 },
+                        { type: "translate", question: "Translate: 'How are you?'", answer: "wie geht es dir" },
+                        { type: "multiple", question: "How do you say 'Yes'?", options: ["Nein", "Ja", "Vielleicht", "Nie"], correct: 1 },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "danke", audio: "Danke" }
+                    ]
+                }
+            ],
+            japanese: [
+                {
+                    id: 1,
+                    title: "Basics 1",
+                    description: "Learn basic greetings and introductions",
+                    xp: 20,
+                    progress: 0,
+                    exercises: [
+                        { type: "multiple", question: "How do you say 'Hello'?", options: ["こんにちは (Konnichiwa)", "さようなら (Sayonara)", "ありがとう (Arigatou)", "お願いします (Onegaishimasu)"], correct: 0 },
+                        { type: "multiple", question: "What does 'おはよう (Ohayou)' mean?", options: ["Good night", "Good morning", "Good afternoon", "Goodbye"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Thank you'", answer: "arigatou" },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "konnichiwa", audio: "こんにちは" },
+                        { type: "multiple", question: "How do you say 'Goodbye'?", options: ["こんにちは", "さようなら (Sayonara)", "はい (Hai)", "いいえ (Iie)"], correct: 1 },
+                        { type: "translate", question: "Translate: 'Please'", answer: "onegaishimasu" },
+                        { type: "multiple", question: "What does 'こんばんは (Konbanwa)' mean?", options: ["Good morning", "Good afternoon", "Good evening", "Good day"], correct: 2 },
+                        { type: "translate", question: "Translate: 'How are you?'", answer: "ogenki desu ka" },
+                        { type: "multiple", question: "How do you say 'Yes'?", options: ["いいえ", "はい (Hai)", "たぶん", "決して"], correct: 1 },
+                        { type: "listening", question: "Listen and type what you hear:", answer: "arigatou", audio: "ありがとう" }
+                    ]
+                }
+            ]
+        };
+
+        // State management
+        let state = {
+            selectedLanguage: null,
+            currentLesson: null,
+            currentExerciseIndex: 0,
+            currentAnswer: null,
+            correctCount: 0,
+            totalXP: 0,
+            streak: 0,
+            isAnswered: false
+        };
+
+        // Initialize audio handler
+        if (window.Poe) {
+            window.Poe.registerHandler("audio-handler", (result) => {
+                const msg = result.responses[0];
+                const audioBtn = document.getElementById('audioBtn');
+                const audioIcon = document.getElementById('audioIcon');
+                const audioText = document.getElementById('audioText');
+
+                if (msg.status === "error") {
+                    audioText.textContent = "Audio Error";
+                    audioIcon.textContent = "⚠️";
+                } else if (msg.status === "incomplete") {
+                    audioIcon.innerHTML = '<span class="loading"></span>';
+                    audioText.textContent = "Loading...";
+                } else if (msg.status === "complete") {
+                    audioIcon.textContent = "🔊";
+                    audioText.textContent = "Play Audio";
+
+                    // Auto-play the audio
+                    if (msg.attachments && msg.attachments.length > 0) {
+                        const audioUrl = msg.attachments[0].url;
+                        const audio = new Audio(audioUrl);
+                        audio.play().catch(err => {
+                            console.log("Audio autoplay blocked:", err);
+                        });
+                    }
+                }
+            });
+        }
+
+        // Screen navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Language selection
+        document.querySelectorAll('.language-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.language-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                state.selectedLanguage = card.dataset.lang;
+                document.getElementById('startBtn').disabled = false;
+            });
+        });
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            if (state.selectedLanguage) {
+                loadLessons();
+                showScreen('lessonsScreen');
+            }
+        });
+
+        // Load lessons
+        function loadLessons() {
+            const lessonGrid = document.getElementById('lessonGrid');
+            lessonGrid.innerHTML = '';
+
+            const languageLessons = lessons[state.selectedLanguage];
+            languageLessons.forEach(lesson => {
+                const lessonCard = document.createElement('div');
+                lessonCard.className = 'lesson-card';
+                lessonCard.innerHTML = `
+                    <div class="lesson-header">
+                        <div class="lesson-title">${lesson.title}</div>
+                        <div class="lesson-xp">+${lesson.xp} XP</div>
+                    </div>
+                    <div class="lesson-description">${lesson.description}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${lesson.progress}%"></div>
+                    </div>
+                `;
+                lessonCard.addEventListener('click', () => startLesson(lesson));
+                lessonGrid.appendChild(lessonCard);
+            });
+        }
+
+        // Start lesson
+        function startLesson(lesson) {
+            state.currentLesson = lesson;
+            state.currentExerciseIndex = 0;
+            state.correctCount = 0;
+            state.isAnswered = false;
+            showScreen('exerciseScreen');
+            loadExercise();
+        }
+
+        // Load exercise
+        function loadExercise() {
+            const exercise = state.currentLesson.exercises[state.currentExerciseIndex];
+            const currentQuestion = state.currentExerciseIndex + 1;
+            const totalQuestions = state.currentLesson.exercises.length;
+
+            document.getElementById('currentQuestion').textContent = currentQuestion;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('progressFill').style.width = `${(currentQuestion / totalQuestions) * 100}%`;
+
+            document.getElementById('questionType').textContent = exercise.type === 'multiple' ? 'Multiple Choice' : exercise.type === 'translate' ? 'Translation' : 'Listening';
+            document.getElementById('questionText').textContent = exercise.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const audioBtn = document.getElementById('audioBtn');
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('show');
+            state.isAnswered = false;
+            state.currentAnswer = null;
+            document.getElementById('checkBtn').disabled = true;
+
+            if (exercise.type === 'multiple') {
+                audioBtn.style.display = 'none';
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+                exercise.options.forEach((option, index) => {
+                    const optionBtn = document.createElement('button');
+                    optionBtn.className = 'option-btn';
+                    optionBtn.textContent = option;
+                    optionBtn.addEventListener('click', () => selectOption(index, optionBtn));
+                    optionsGrid.appendChild(optionBtn);
+                });
+                optionsContainer.appendChild(optionsGrid);
+            } else if (exercise.type === 'translate' || exercise.type === 'listening') {
+                if (exercise.type === 'listening') {
+                    audioBtn.style.display = 'inline-flex';
+                    audioBtn.onclick = () => playAudio(exercise.audio);
+                    // Auto-play audio on load
+                    setTimeout(() => playAudio(exercise.audio), 500);
+                } else {
+                    audioBtn.style.display = 'none';
+                }
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'input-answer';
+                input.placeholder = 'Type your answer...';
+                input.addEventListener('input', (e) => {
+                    state.currentAnswer = e.target.value.trim().toLowerCase();
+                    document.getElementById('checkBtn').disabled = !state.currentAnswer;
+                });
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !document.getElementById('checkBtn').disabled) {
+                        checkAnswer();
+                    }
+                });
+                optionsContainer.appendChild(input);
+                setTimeout(() => input.focus(), 100);
+            }
+        }
+
+        // Select option
+        function selectOption(index, button) {
+            if (state.isAnswered) return;
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            state.currentAnswer = index;
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        // Custom alert modal
+        function showAlert(message) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+            modal.innerHTML = `
+                <div style="background: var(--bg-light); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-lg); max-width: 400px; width: 90%; margin: 1rem;">
+                    <p style="color: var(--text-dark); margin-bottom: 1.5rem; font-size: 1.125rem;">${message}</p>
+                    <button class="btn" style="width: 100%;" onclick="this.closest('div').parentElement.remove()">OK</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Play audio using Poe API
+        async function playAudio(text) {
+            if (!window.Poe) {
+                showAlert('Audio is not available in this environment');
+                return;
+            }
+
+            const audioBtn = document.getElementById('audioBtn');
+            const audioIcon = document.getElementById('audioIcon');
+            const audioText = document.getElementById('audioText');
+
+            audioIcon.innerHTML = '<span class="loading"></span>';
+            audioText.textContent = "Loading...";
+
+            // Determine voice based on language
+            let voice = 'Jessica';
+            if (state.selectedLanguage === 'spanish') {
+                voice = 'David Martin';
+            } else if (state.selectedLanguage === 'french') {
+                voice = 'Louis';
+            } else if (state.selectedLanguage === 'german') {
+                voice = 'Otto';
+            } else if (state.selectedLanguage === 'japanese') {
+                voice = 'Alice';
+            }
+
+            try {
+                await window.Poe.sendUserMessage(
+                    `@ElevenLabs-v2.5-Turbo ${text} --voice ${voice}`,
+                    {
+                        handler: "audio-handler",
+                        stream: false,
+                        openChat: false
+                    }
+                );
+            } catch (err) {
+                audioText.textContent = "Audio Error";
+                audioIcon.textContent = "⚠️";
+                console.error("Audio error:", err);
+            }
+        }
+
+        // Check answer
+        function checkAnswer() {
+            if (state.isAnswered) return;
+
+            const exercise = state.currentLesson.exercises[state.currentExerciseIndex];
+            const feedback = document.getElementById('feedback');
+            const feedbackText = document.getElementById('feedbackText');
+            const correctAnswerText = document.getElementById('correctAnswerText');
+            let isCorrect = false;
+
+            if (exercise.type === 'multiple') {
+                isCorrect = state.currentAnswer === exercise.correct;
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach((btn, index) => {
+                    btn.disabled = true;
+                    if (index === exercise.correct) {
+                        btn.classList.add('correct');
+                    } else if (index === state.currentAnswer && !isCorrect) {
+                        btn.classList.add('incorrect');
+                    }
+                });
+            } else {
+                const expectedAnswer = exercise.answer.toLowerCase().trim();
+                const userAnswer = state.currentAnswer.toLowerCase().trim();
+
+                // Allow some flexibility in answers
+                isCorrect = userAnswer === expectedAnswer ||
+                           userAnswer.replace(/[^a-z0-9]/g, '') === expectedAnswer.replace(/[^a-z0-9]/g, '');
+
+                const input = document.querySelector('.input-answer');
+                input.disabled = true;
+                input.style.borderColor = isCorrect ? 'var(--success-color)' : 'var(--error-color)';
+            }
+
+            if (isCorrect) {
+                state.correctCount++;
+                feedback.className = 'feedback correct show';
+                feedbackText.textContent = '🎉 Excellent! That\'s correct!';
+                correctAnswerText.textContent = '';
+            } else {
+                feedback.className = 'feedback incorrect show';
+                feedbackText.textContent = '❌ Not quite right.';
+                if (exercise.type === 'multiple') {
+                    correctAnswerText.textContent = `Correct answer: ${exercise.options[exercise.correct]}`;
+                } else {
+                    correctAnswerText.textContent = `Correct answer: ${exercise.answer}`;
+                }
+            }
+
+            state.isAnswered = true;
+            document.getElementById('checkBtn').textContent = 'Continue';
+            document.getElementById('checkBtn').disabled = false;
+            document.getElementById('skipBtn').style.display = 'none';
+        }
+
+        // Check button handler
+        document.getElementById('checkBtn').addEventListener('click', () => {
+            if (!state.isAnswered) {
+                checkAnswer();
+            } else {
+                nextExercise();
+            }
+        });
+
+        // Skip button handler
+        document.getElementById('skipBtn').addEventListener('click', () => {
+            nextExercise();
+        });
+
+        // Next exercise
+        function nextExercise() {
+            state.currentExerciseIndex++;
+            if (state.currentExerciseIndex < state.currentLesson.exercises.length) {
+                document.getElementById('checkBtn').textContent = 'Check';
+                document.getElementById('skipBtn').style.display = 'block';
+                loadExercise();
+            } else {
+                completeLesson();
+            }
+        }
+
+        // Complete lesson
+        function completeLesson() {
+            const totalQuestions = state.currentLesson.exercises.length;
+            const accuracy = Math.round((state.correctCount / totalQuestions) * 100);
+            const earnedXP = state.currentLesson.xp;
+
+            state.totalXP += earnedXP;
+            state.streak++;
+            state.currentLesson.progress = 100;
+
+            document.getElementById('totalXP').textContent = state.totalXP;
+            document.getElementById('streak').textContent = state.streak;
+
+            document.getElementById('earnedXP').textContent = `+${earnedXP}`;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+            document.getElementById('correctAnswers').textContent = `${state.correctCount}/${totalQuestions}`;
+
+            showScreen('completeScreen');
+        }
+
+        // Continue button
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            loadLessons();
+            showScreen('lessonsScreen');
+        });
+    </script>
+</body>
+</html>
